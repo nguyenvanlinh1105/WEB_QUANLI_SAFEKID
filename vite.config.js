@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
-import { createHtmlPlugin } from 'vite-plugin-html-template';
-
+import { createHtmlPlugin } from 'vite-plugin-html';
 
 export default defineConfig({
   root: './',
@@ -24,7 +23,7 @@ export default defineConfig({
           src: 'assest/css/*',
           dest: 'assest/css'
         },
-         {
+        {
           src: 'assest/img/*',
           dest: 'assest/img'
         }
@@ -37,7 +36,16 @@ export default defineConfig({
           filename: 'assest/dashboard/dashboard.html',
           injectOptions: {
             data: {
-              VITE_FIREBASE_API_KEY: process.env.VITE_FIREBASE_API_KEY
+              VITE_FIREBASE_API_KEY: process.env.VITE_FIREBASE_API_KEY,
+              VITE_FIREBASE_AUTH_DOMAIN: process.env.VITE_FIREBASE_AUTH_DOMAIN,
+              VITE_FIREBASE_DATABASE_URL: process.env.VITE_FIREBASE_DATABASE_URL,
+              VITE_FIREBASE_PROJECT_ID: process.env.VITE_FIREBASE_PROJECT_ID,
+              VITE_FIREBASE_STORAGE_BUCKET: process.env.VITE_FIREBASE_STORAGE_BUCKET,
+              VITE_FIREBASE_MESSAGING_SENDER_ID: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+              VITE_FIREBASE_APP_ID: process.env.VITE_FIREBASE_APP_ID,
+              VITE_FIREBASE_MEASUREMENT_ID: process.env.VITE_FIREBASE_MEASUREMENT_ID,
+              VITE_GOOGLE_MAPS_API_KEY: process.env.VITE_GOOGLE_MAPS_API_KEY,
+              VITE_OPENCAGE_API_KEY: process.env.VITE_OPENCAGE_API_KEY
             }
           }
         }

@@ -324,8 +324,10 @@
     <script type="module">
         // Function to load Google Maps API dynamically
         function loadGoogleMapsAPI(callback) {
+            const googleMapsApiKey = "<%= VITE_GOOGLE_MAPS_API_KEY %>";
+
             const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&libraries=visualization&callback=initMap`;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=visualization&callback=initMap`;
             script.async = true;
             script.defer = true;
             window.initMap = callback;
@@ -344,16 +346,16 @@
             }
 
             // Firebase configuration
-            const firebaseConfig = {
-                apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-                authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-                databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
-                projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-                storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-                messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-                appId: import.meta.env.VITE_FIREBASE_APP_ID,
-                measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
-            };
+           const firebaseConfig = {
+                apiKey: "<%= VITE_FIREBASE_API_KEY %>",
+                authDomain: "<%= VITE_FIREBASE_AUTH_DOMAIN %>",
+                databaseURL: "<%= VITE_FIREBASE_DATABASE_URL %>",
+                projectId: "<%= VITE_FIREBASE_PROJECT_ID %>",
+                storageBucket: "<%= VITE_FIREBASE_STORAGE_BUCKET %>",
+                messagingSenderId: "<%= VITE_FIREBASE_MESSAGING_SENDER_ID %>",
+                appId: "<%= VITE_FIREBASE_APP_ID %>",
+                measurementId: "<%= VITE_FIREBASE_MEASUREMENT_ID %>"
+                };
 
             // Initialize Firebase
             const app = firebase.initializeApp(firebaseConfig);
@@ -791,8 +793,8 @@
                 }
 
                 function getAddressFromLatLng(lat, lng) {
-                    const apiKey = import.meta.env.VITE_OPENCAGE_API_KEY;
-                    const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${apiKey}`;
+                    const openCageApiKey = "<%= VITE_OPENCAGE_API_KEY %>";
+                    const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lng}&key=${openCageApiKey}`;
                     return fetch(url)
                         .then(response => response.json())
                         .then(data => {
