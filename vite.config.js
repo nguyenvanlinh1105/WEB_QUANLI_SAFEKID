@@ -7,6 +7,9 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    rollupOptions: {
+      external: ['fsevents']
+    }
   },
   envPrefix: 'VITE_',
   server: {
