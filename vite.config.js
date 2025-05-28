@@ -1,14 +1,14 @@
 import { defineConfig } from 'vite';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { createHtmlPlugin } from 'vite-plugin-html';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
   root: './',
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    rollupOptions: {
-      external: ['fsevents']
+     rollupOptions: {
+      external: ['fsevents'],  
     }
   },
   envPrefix: 'VITE_',
