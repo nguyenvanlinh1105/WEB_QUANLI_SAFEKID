@@ -15,8 +15,12 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: 'assest/dashboard/dashboard.html', // sửa lại đúng tên thư mục
+          src: 'assest/dashboard/dashboard.html',
           dest: 'assest/dashboard'
+        },
+        {
+          src: 'assest/css/*',
+          dest: 'assest/css'
         }
       ]
     })
