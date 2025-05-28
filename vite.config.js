@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import { createHtmlPlugin } from 'vite-plugin-html-template';
+
 
 export default defineConfig({
   root: './',
@@ -25,6 +27,19 @@ export default defineConfig({
          {
           src: 'assest/img/*',
           dest: 'assest/img'
+        }
+      ]
+    }),
+    createHtmlPlugin({
+      pages: [
+        {
+          entry: 'assest/dashboard/dashboard.html',
+          filename: 'assest/dashboard/dashboard.html',
+          injectOptions: {
+            data: {
+              VITE_FIREBASE_API_KEY: process.env.VITE_FIREBASE_API_KEY
+            }
+          }
         }
       ]
     })
