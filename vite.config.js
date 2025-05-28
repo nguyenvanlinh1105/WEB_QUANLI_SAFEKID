@@ -21,6 +21,10 @@ export default defineConfig({
         {
           src: 'assest/css/*',
           dest: 'assest/css'
+        },
+         {
+          src: 'assest/img/*',
+          dest: 'assest/img'
         }
       ]
     })
