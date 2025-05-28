@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Vì sự an toàn của trẻ em</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <style>
+        /* [Giữ nguyên CSS hiện tại của bạn] */
+        :root {
+            --primary-blue: #1e88e5;
+            --secondary-green: #43a047;
+            --light-gray: #f5f5f5;
+            --dark-gray: #333;
+            --error-red: #e53935;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-gray);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+        }
+        
+        .login-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background-color: var(--primary-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+        }
+        
+        .logo img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 50%;
+        }
+        
+        h1 {
+            color: var(--dark-gray);
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        
+        .slogan {
+            color: var(--primary-blue);
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark-gray);
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus {
+            border-color: var(--primary-blue);
+            outline: none;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-10%);
+            cursor: pointer;
+            color: var(--dark-gray);
+            font-size: 18px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(to right, var(--primary-blue), var(--secondary-green));
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+        }
+        
+        .error-message {
+            color: var(--error-red);
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .footer-links {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .footer-links a {
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+        
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (hover: none) {
+            .login-container {
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <span><img src="/assest/img/bg_app.png" alt="Logo"></span>
+        </div>
+        <h1>Đăng nhập</h1>
+        <p class="slogan">Vì sự an toàn của trẻ em</p>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="Nhập email của bạn">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Mật khẩu</label>
+                <input type="password" id="password" name="password" required placeholder="Nhập mật khẩu">
+                <span class="toggle-password">👁️</span>
+            </div>
+            
+            <button type="submit">Đăng nhập</button>
+        </form>
+    </div>
+
+    <script type="module">
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+            authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+            databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+            projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+            storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+            appId: import.meta.env.VITE_FIREBASE_APP_ID,
+            measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Xử lý ẩn/hiện mật khẩu
+        const togglePassword = document.querySelector('.toggle-password');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            togglePassword.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
+        // Xử lý đăng nhập
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                alert('Vui lòng nhập đầy đủ email và mật khẩu.');
+                return;
+            }
+
+            // Tham chiếu đến node users trong Realtime Database
+            const usersRef = database.ref('users');
+
+            // Tìm user có email trùng khớp
+            usersRef.orderByChild('email').equalTo(email).once('value')
+                .then((snapshot) => {
+                    if (!snapshot.exists()) {
+                        alert('Tài khoản không tồn tại trong hệ thống.');
+                        return;
+                    }
+
+                    let userFound = false;
+                    snapshot.forEach((childSnapshot) => {
+                        const user = childSnapshot.val();
+                        const userId = childSnapshot.key;
+
+                        // So sánh mật khẩu (cảnh báo: không an toàn, nên mã hóa mật khẩu)
+                        if (user.password === password) {
+                            userFound = true;
+
+                            // Kiểm tra trạng thái tài khoản
+                            if (user.status !== 'active') {
+                                alert('Tài khoản của bạn không hoạt động. Vui lòng liên hệ quản trị viên.');
+                                return;
+                            }
+
+                            if (user.role !== 'admin') {
+                                alert('Tài khoản không có quyền truy cập trang admin');
+                                return;
+                            }
+
+                            // Lưu thời gian đăng nhập hiện tại (09:18 AM +07, 28/05/2025)
+                            const loginTime = new Date('2025-05-28T09:18:00+07:00').toISOString();
+                            database.ref(`users/${userId}/lastLogin`).set(loginTime);
+
+                            // Lưu thông tin user vào sessionStorage
+                            sessionStorage.setItem('currentUser', JSON.stringify({
+                                id: userId,
+                                email: user.email,
+                                fullName: user.fullName,
+                                role: user.role,
+                                status: user.status,
+                                lastLogin: loginTime
+                            }));
+
+                            // Chuyển hướng đến trang chính
+                            window.location.href = '/assest/dashboard/dashboard.html';
+                        }
+                    });
+
+                    if (!userFound) {
+                        alert('Mật khẩu không chính xác.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Lỗi khi đăng nhập:', error);
+                    alert('Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.');
+                });
+        });
+    </script>
+</body>
+</html>
