@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng nhập - Vì sự an toàn của trẻ em</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-messaging-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <style>
+        /* [Giữ nguyên CSS hiện tại của bạn] */
         :root {
             --primary-blue: #1e88e5;
             --secondary-green: #43a047;
@@ -75,7 +77,7 @@
         .form-group {
             margin-bottom: 20px;
             text-align: left;
-            position: relative; /* Thêm để định vị biểu tượng mắt */
+            position: relative;
         }
         
         label {
@@ -87,7 +89,7 @@
         
         input {
             width: 100%;
-            padding: 12px 40px 12px 15px; /* Điều chỉnh padding để chừa chỗ cho biểu tượng */
+            padding: 12px 40px 12px 15px;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
@@ -153,11 +155,12 @@
             }
         }
     </style>
+  <script type="module" crossorigin src="/assets/index-BiYdGccl.js"></script>
 </head>
 <body>
     <div class="login-container">
         <div class="logo">
-            <span><img src="/assets/bg_app-BG0_KC19.png" alt=""></span>
+            <span><img src="/assets/bg_app-BG0_KC19.png" alt="Logo"></span>
         </div>
         <h1>Đăng nhập</h1>
         <p class="slogan">Vì sự an toàn của trẻ em</p>
@@ -174,115 +177,9 @@
                 <span class="toggle-password">👁️</span>
             </div>
             
-            
             <button type="submit">Đăng nhập</button>
         </form>
     </div>
-
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
-    
-    <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAMimu-AKBo-ISvXCS4wORyCfyHVwFi8D0",
-            authDomain: "labln-fd4bb.firebaseapp.com",
-            databaseURL: "https://labln-fd4bb-default-rtdb.firebaseio.com",
-            projectId: "labln-fd4bb",
-            storageBucket: "labln-fd4bb.appspot.com",
-            messagingSenderId: "181646000819",
-            appId: "1:181646000819:web:d97cbfb2a1b4e3dac066c6",
-            measurementId: "G-V2ZG8EX96K"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-
-        // Xử lý ẩn/hiện mật khẩu
-        const togglePassword = document.querySelector('.toggle-password');
-        const passwordInput = document.getElementById('password');
-        
-        togglePassword.addEventListener('click', () => {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            togglePassword.textContent = type === 'password' ? '👁️' : '🙈';
-        });
-
-        // Xử lý đăng nhập
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            
-            
-            if (!email || !password) {
-                alert('Vui lòng nhập đầy đủ email và mật khẩu.');
-                return;
-            }
-
-            // Tham chiếu đến node users trong Realtime Database
-            const usersRef = database.ref('users');
-            
-            // Tìm user có email trùng khớp
-            usersRef.orderByChild('email').equalTo(email).once('value')
-                .then((snapshot) => {
-                    if (!snapshot.exists()) {
-                        alert('tài khoản không tồn tại trong hệ thống.');
-                        return;
-                    }
-                    
-                    // Lấy dữ liệu user
-                    let userFound = false;
-                    snapshot.forEach((childSnapshot) => {
-                        const user = childSnapshot.val();
-                        const userId = childSnapshot.key;
-                        
-                        // So sánh mật khẩu (trong thực tế nên dùng bcrypt hoặc giải pháp mã hóa mạnh hơn)
-                        // Ở đây giả sử password trong database đã được mã hóa
-                        // const hashedPassword = simpleHash(password);
-                        
-                        if (user.password === password) {
-                            userFound = true;
-                            
-                            // Kiểm tra trạng thái tài khoản
-                            if (user.status !== 'active') {
-                                alert('Tài khoản của bạn không hoạt động. Vui lòng liên hệ quản trị viên.');
-                                return;
-                            }
-
-                            if(user.role !=='admin'){
-                                alert("Tài khoản không có quyền truy cập trang admin");
-                                return ;
-                            }
-                            
-                            // Đăng nhập thành công
-                            // Lưu thông tin user vào sessionStorage/localStorage
-                            sessionStorage.setItem('currentUser', JSON.stringify({
-                                id: userId,
-                                email: user.email,
-                                fullName: user.fullName,
-                                role: user.role,
-                                status: user.status
-                            }));
-                            
-                            // Chuyển hướng đến trang chính
-                            window.location.href = '/assest/dashboard/dashboard.html';
-                        }
-                    });
-                    
-                    if (!userFound) {
-                        alert('Mật khẩu không chính xác.');
-                    }
-                })
-                .catch((error) => {
-                    console.error('Lỗi khi đăng nhập:', error);
-                    alert('Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.');
-                });
-        });
-    </script>
+
 </body>
 </html>
